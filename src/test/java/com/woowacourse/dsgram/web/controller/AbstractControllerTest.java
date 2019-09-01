@@ -54,17 +54,17 @@ public class AbstractControllerTest {
                 .exchange();
     }
 
-    Long saveArticle(String cookie) {
+    Long saveArticle(String cookie, String contents) {
         long[] articleId = new long[1];
-        requestWithBodyBuilder(createMultipartBodyBuilder(), HttpMethod.POST, "/api/articles", cookie)
+        requestWithBodyBuilder(createMultipartBodyBuilder(contents), HttpMethod.POST, "/api/articles", cookie)
                 .expectBody()
-                .jsonPath("$.id")
+                .jsonPath("$")
                 .value(id -> articleId[0] = Long.parseLong(id.toString()));
 
         return articleId[0];
     }
 
-    MultipartBodyBuilder createMultipartBodyBuilder() {
+    MultipartBodyBuilder createMultipartBodyBuilder(String contents) {
         MultipartBodyBuilder bodyBuilder = new MultipartBodyBuilder();
         bodyBuilder.part("file", new ByteArrayResource(new byte[]{1, 2, 3, 4}) {
             @Override
@@ -72,9 +72,16 @@ public class AbstractControllerTest {
                 return "catImage.jpeg";
             }
         }, MediaType.IMAGE_JPEG);
-        bodyBuilder.part("contents", "contents");
+        bodyBuilder.part("contents", contents);
         bodyBuilder.part("hashtag", "hashtag");
         return bodyBuilder;
+    }
+
+    ResponseSpec requestUserFeed(String nickName, String cookie) {
+        return webTestClient.get().uri("/users/{nickName}", nickName)
+                .header("cookie", cookie)
+                .exchange()
+                .expectStatus().isOk();
     }
 
 
