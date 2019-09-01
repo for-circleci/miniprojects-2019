@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,6 +44,10 @@ public class UserService {
         }
     }
 
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
     public UserDto findUserInfoById(long userId, LoggedInUser loggedInUser) {
         User user = findUserById(userId);
         user.checkEmail(loggedInUser.getEmail());
@@ -56,7 +61,6 @@ public class UserService {
 
     @Transactional
     public LoggedInUser update(long userId, EditUserRequest editUserRequest, LoggedInUser loggedInUser) {
-        // TODO: 2019-08-22 정리해보기^^;
         User user = findUserById(userId);
         checkDuplicatedNickName(editUserRequest, user);
         Optional<MultipartFile> maybeFile = editUserRequest.getFile();
@@ -103,7 +107,6 @@ public class UserService {
     }
 
     public void deleteUserById(long id, LoggedInUser loggedInUser) {
-        // TODO: 2019-08-20 OAUTH revoke?
         User user = findByEmail(loggedInUser.getEmail())
                 .orElseThrow(NotFoundUserException::new);
         if (user.isNotSameId(id)) {
@@ -116,5 +119,9 @@ public class UserService {
         User user = findUserById(userId);
         FileInfo fileInfo = user.getFileInfo();
         return fileService.readFileByFileInfo(fileInfo);
+    }
+
+    public User findByNickName(String nickName) {
+        return userRepository.findByNickName(nickName).orElseThrow(NotFoundUserException::new);
     }
 }
