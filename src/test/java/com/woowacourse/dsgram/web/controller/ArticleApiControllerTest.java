@@ -72,7 +72,7 @@ class ArticleApiControllerTest extends AbstractControllerTest {
                 .expectBody()
                 .consumeWith(res -> {
                     String body = new String(Objects.requireNonNull(res.getResponseBody()));
-                    assertThat(body.contains(articleEditRequest.getContents())).isFalse();
+                    assertThat(body.contains(articleEditRequest.getContents())).isTrue();
                 });
     }
 
