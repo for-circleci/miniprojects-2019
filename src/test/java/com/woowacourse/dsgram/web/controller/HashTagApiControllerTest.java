@@ -92,7 +92,7 @@ class HashTagApiControllerTest extends AbstractControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
-                .consumeWith(document("/hashTags/get/search",
+                .consumeWith(document("hashTags/get/search",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         pathParameters(parameterWithName("keyword").description("검색할 키워드"))));
